@@ -78,6 +78,9 @@ public class MainActivity extends ActionBarActivity {
                     "Today- Sunny -88/63",
                     "Today- Sunny -88/63",
                     "Today- Sunny -88/63",
+                    "Today- Sunny -88/63",
+                    "Today- Sunny -88/63",
+                    "Today- Sunny -88/63",
                     "Today- Sunny -88/63"
             };
 
