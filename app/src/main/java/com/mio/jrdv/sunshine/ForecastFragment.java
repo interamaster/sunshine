@@ -40,6 +40,10 @@ import java.util.List;
  */
 public class ForecastFragment extends Fragment {
 
+    //  ArrayAdapter como ivar para poder acceder a el desde el asyntask
+    private ArrayAdapter<String> mForecastAdapter;
+
+
     public ForecastFragment() {
     }
 
@@ -85,7 +89,7 @@ public class ForecastFragment extends Fragment {
             //weatherTask.execute();
             //como ahora le podemos asar el parametro...
 
-            weatherTask.execute("94043");
+            weatherTask.execute("seville");
             return true;
 
 
@@ -129,7 +133,12 @@ public class ForecastFragment extends Fragment {
         //Y a partir de ambos creamos el ArrayAdapter que cogera los
         //datos de la List(weekForeCast) recien creada con los datos del array(foresCastArray)
 
-        ArrayAdapter<String> mForecastAdapter = new ArrayAdapter<String>(
+
+
+        //ArrayAdapter<String> mForecastAdapter = new ArrayAdapter<String>(
+        //hemos definido antes este ArrayAdapter como ivar para poder acceder a el desde el asytask
+
+         mForecastAdapter = new ArrayAdapter<String>(
                 //el context es este fragment parent activity
                 getActivity(),
                 //Id del de item layout
@@ -399,7 +408,34 @@ Not all types are always used by an asynchronous task. To mark a type as unused,
             return null;
         }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
+        @Override
+        protected void onPostExecute(String[] result) {
+            super.onPostExecute(result);
+            //CUANDO HA TERMIADO TENEMOS AQUI EL ARRAY DE STRINGS[] LLAMADO "strings"
+            //Y COMO HEMOS HECHO IVAR EL ARRAYADAPTER "mFrorecastAdapter" podemos actualizarlo
+
+            /*
+            adapter.clear();
+                for(int i = 0;i<categoriesArray.length;i++){
+                  adapter.add(categoriesArray[i]);
+                    }
+             */
+            if (result !=null){
+
+                mForecastAdapter.clear();
+
+                for (String dayForeCastStr : result){
+                    mForecastAdapter.add(dayForeCastStr);
+                }
+
+                //listo actualizado
+
+            }
+
+        }
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////JSON HELPER METHODS!!!//////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
