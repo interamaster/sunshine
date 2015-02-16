@@ -5,4 +5,12 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+
+    <item android:id="@+id/action_map"
+        android:title="@string/action_map"
+        android:orderInCategory="10"
+        app:showAsAction="never" />
+
+
+
 </menu>

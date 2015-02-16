@@ -1,8 +1,11 @@
 package com.mio.jrdv.sunshine;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -26,10 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-
 
 
 //para sacarla de  la  mainActivity y crear una nueva class:8ver evernote tambien)
@@ -78,7 +79,7 @@ public class ForecastFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-
+    /*
             //return true;
             //ahora en vez de esto que haga el asyntask
 
@@ -89,7 +90,31 @@ public class ForecastFragment extends Fragment {
             //weatherTask.execute();
             //como ahora le podemos asar el parametro...
 
-            weatherTask.execute("seville");
+            //weatherTask.execute("seville");
+
+            //aqui ahora en vez de meterlo a ano habria que cogerlo del Settings!!
+
+            SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+            //asi si no hay valor en el key coge le default!!:
+            //http://developer.android.com/reference/android/content/SharedPreferences.html
+
+
+
+            String LocationFromPrefs= pref.getString(getString(R.string.pref_location_key),
+                    getString(R.string.pref_location_default));
+
+            weatherTask.execute(LocationFromPrefs);
+*/
+
+
+
+            //AHORA LO DE ARRIBA LO PONGO ENUN METODO APARTE
+
+            updateWeather();
+
+
+
             return true;
 
 
@@ -99,11 +124,56 @@ public class ForecastFragment extends Fragment {
 
     }
 
+
+    private void updateWeather(){
+
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        //weatherTask.execute();
+        //como ahora le podemos asar el parametro...
+
+        //weatherTask.execute("seville");
+
+        //aqui ahora en vez de meterlo a ano habria que cogerlo del Settings!!
+
+        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        //asi si no hay valor en el key coge le default!!:
+        //http://developer.android.com/reference/android/content/SharedPreferences.html
+
+
+
+        String LocationFromPrefs= pref.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+
+        weatherTask.execute(LocationFromPrefs);
+
+    }
+
+
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        //al arrancarque ya actualziae del tiron
+
+        updateWeather();
+
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        /*
         //creamos un array de datos para la listview
         String[] forecastArray = {
                 "Today- Sunny -88/63",
@@ -149,6 +219,31 @@ public class ForecastFragment extends Fragment {
                 weekForecast
         );
 
+        */
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////AHORA LO CREAMOS VACIO!!///////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+        mForecastAdapter = new ArrayAdapter<String>(
+                //el context es este fragment parent activity
+                getActivity(),
+                //Id del de item layout
+                R.layout.list_item_forecast_textview,
+                //ID del text para rellenar dentro de ese layout
+                R.id.list_item_forecast_textview,
+                //los datos  a rellenar a partir de la List creada
+                new ArrayList<String>()
+        );
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////
+
+
         //Find a reference to the ListView en el Layout del Fragment
 
         ListView listView = (ListView) rootView.findViewById(R.id.listView_forecast);
@@ -156,6 +251,32 @@ public class ForecastFragment extends Fragment {
         //a esa listview le atach el adapter creado para que pong alos datos
 
         listView.setAdapter(mForecastAdapter);
+        //ahora ponems un listener
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                //y aqui de moemento poemo un toast con la weatherinfo
+                /*
+                Context context = getActivity();
+                String textForeCast = mForecastAdapter.getItem(position);
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, textForeCast, duration);
+                toast.show();
+                */
+
+                String textForeCast = mForecastAdapter.getItem(position);
+
+                //AHORA EN VEZ DE L TOAST LANZAMOS LA NEW ACTIVITY POR MEDIO DE UN INTENT
+
+                Intent intent=new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT,textForeCast);
+                startActivity(intent);
+
+            }
+        });
 
 
 
@@ -452,10 +573,47 @@ Not all types are always used by an asynchronous task. To mark a type as unused,
             return format.format(date).toString();
         }
 
+
+        /*
+        //Prepare the weather high/lows for presentation.
+
+        private String formatHighLows(double high, double low) {
+            // For presentation, assume the user doesn't care about tenths of a degree.
+            long roundedHigh = Math.round(high);
+            long roundedLow = Math.round(low);
+
+            String highLowStr = roundedHigh + "/" + roundedLow;
+            return highLowStr;
+        }
+*/
+
+        //new metodo para cambiar de celsius a farenheit
+
+
         /**
          * Prepare the weather high/lows for presentation.
          */
         private String formatHighLows(double high, double low) {
+            // Data is fetched in Celsius by default.
+            // If user prefers to see in Fahrenheit, convert the values here.
+            // We do this rather than fetching in Fahrenheit so that the user can
+            // change this option without us having to re-fetch the data once
+            // we start storing the values in a database.
+            SharedPreferences sharedPrefs =
+                    PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String unitType = sharedPrefs.getString(
+                    getString(R.string.pref_temperature_key),
+                    getString(R.string.pref_units_metric));
+
+
+
+            if (unitType.equals(getString(R.string.pref_units_imperial))) {
+                high = (high * 1.8) + 32;
+                low = (low * 1.8) + 32;
+            } else if (!unitType.equals(getString(R.string.pref_units_metric))) {
+                Log.d(LOG_TAG, "Unit type not found: " + unitType);
+            }
+
             // For presentation, assume the user doesn't care about tenths of a degree.
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
@@ -512,7 +670,7 @@ Not all types are always used by an asynchronous task. To mark a type as unused,
                 double high = temperatureObject.getDouble(OWM_MAX);
                 double low = temperatureObject.getDouble(OWM_MIN);
 
-                highAndLow = formatHighLows(high, low);
+               highAndLow = formatHighLows(high, low);
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
