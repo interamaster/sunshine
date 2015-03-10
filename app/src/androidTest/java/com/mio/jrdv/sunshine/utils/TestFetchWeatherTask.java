@@ -15,7 +15,6 @@
  */
 package com.mio.jrdv.sunshine.utils;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.test.AndroidTestCase;
 
@@ -33,7 +32,7 @@ public class TestFetchWeatherTask extends AndroidTestCase{
         This test will only run on API level 11 and higher because of a requirement in the
         content provider.
      */
-    @TargetApi(11)
+    //@TargetApi(11)
     public void testAddLocation() {
         // start from a clean state
         getContext().getContentResolver().delete(WeatherContract.LocationEntry.CONTENT_URI,

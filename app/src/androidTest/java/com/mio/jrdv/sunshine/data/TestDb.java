@@ -300,4 +300,63 @@ public class TestDb extends AndroidTestCase {
         WeatheeCursor.close();
         dbWeatherTest.close();
     }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    //////
+//
+//    ///nuevos copiados de Verison 1
+//
+//    static final String TEST_LOCATION = "99705";
+//    static final String TEST_DATE = "20141205";
+//
+//    public static final String COLUMN_DATETEXT = "date";
+//
+//    static ContentValues createNorthPoleLocationValues() {
+//        // Create a new map of values, where column names are the keys
+//        ContentValues testValues = new ContentValues();
+//        testValues.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, TEST_LOCATION);
+//        testValues.put(WeatherContract.LocationEntry.COLUMN_CITY_NAME, "North Pole");
+//        testValues.put(WeatherContract.LocationEntry.COLUMN_COORD_LAT, 64.7488);
+//        testValues.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG, -147.353);
+//
+//        return testValues;
+//    }
+//
+//    static void validateCursor(Cursor valueCursor, ContentValues expectedValues) {
+//
+//        assertTrue(valueCursor.moveToFirst());
+//
+//        Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
+//        for (Map.Entry<String, Object> entry : valueSet) {
+//            String columnName = entry.getKey();
+//            int idx = valueCursor.getColumnIndex(columnName);
+//            assertFalse(idx == -1);
+//            String expectedValue = entry.getValue().toString();
+//            assertEquals(expectedValue, valueCursor.getString(idx));
+//        }
+//        valueCursor.close();
+//    }
+//
+//
+//    static ContentValues createWeatherValues(long locationRowId) {
+//        ContentValues weatherValues = new ContentValues();
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY, locationRowId);
+//        weatherValues.put( COLUMN_DATETEXT, TEST_DATE);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DEGREES, 1.1);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_HUMIDITY, 1.2);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_PRESSURE, 1.3);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP, 75);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP, 65);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC, "Asteroids");
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED, 5.5);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID, 321);
+//
+//        return weatherValues;
+//    }
 }
