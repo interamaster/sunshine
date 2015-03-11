@@ -183,6 +183,14 @@ public class WeatherProvider extends ContentProvider {
                         String sortOrder) {
         // Here's the switch statement that, given a URI, will determine what kind of request it is,
         // and query the database accordingly.
+
+        //EL URI AL INIT ES:content://com.mio.jrdv.sunshine.app/location POR LO QUE SE VA AL CASE LOCATION
+        //EL PROJECTION ES "_id"
+        // EL SELECTION ES:"location_setting = ?"
+        //Y EL SELECTION ARGS ES:[seville]
+        //Y EL SETORDER EN "null"
+
+
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
             // "weather/*/*"

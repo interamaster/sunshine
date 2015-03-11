@@ -141,9 +141,12 @@ public class ForecastFragment extends Fragment {
 
         FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity(), mForecastAdapter);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String location = prefs.getString(getString(R.string.pref_location_key),
+        //asi si no hay valor en el key coge le default!!:
+        //http://developer.android.com/reference/android/content/SharedPreferences.html
+
+        String LocationFromPrefs = prefs.getString(getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default));
-        weatherTask.execute(location);
+        weatherTask.execute(LocationFromPrefs);
 
     }
 

@@ -125,6 +125,11 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
                 WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ?",
                 new String[]{locationSetting},
                 null);
+        // WeatherContract.LocationEntry.CONTENT_URI:
+        //  ES content://com.mio.jrdv.sunshine.app/location
+
+
+
 
         if (locationCursor.moveToFirst()) {
             int locationIdIndex = locationCursor.getColumnIndex(WeatherContract.LocationEntry._ID);
@@ -382,7 +387,16 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
                     .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
                     .build();
 
+            //ESTO DA
+            //http://api.openweathermap.org/data/2.5/forecast/daily?q=seville&mode=json&units=metric&cnt=14
+
             URL url = new URL(builtUri.toString());
+
+            //Y ESTO LO MISMO
+
+            //http://api.openweathermap.org/data/2.5/forecast/daily?q=seville&mode=json&units=metric&cnt=14
+
+
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
