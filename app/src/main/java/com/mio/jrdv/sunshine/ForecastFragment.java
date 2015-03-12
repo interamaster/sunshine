@@ -1,9 +1,8 @@
 package com.mio.jrdv.sunshine;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,10 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.ArrayList;
+import com.mio.jrdv.sunshine.data.WeatherContract;
 
 
 //para sacarla de  la  mainActivity y crear una nueva class:ver evernote tambien)
@@ -26,9 +24,23 @@ import java.util.ArrayList;
  */
 public class ForecastFragment extends Fragment {
 
-    //  ArrayAdapter como ivar para poder acceder a el desde el asyntask
-    private ArrayAdapter<String> mForecastAdapter;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+    //  ArrayAdapter como ivar para poder acceder a el desde el asyntask
+    //private ArrayAdapter<String> mForecastAdapter;
+
+    //vamoa acambiarlo por el nuevo FroreCastAdapter!!:
+
+//    1. Change mForecastAdapter's type
+//
+//    Change mForecastAdapter, to be an instance of ForecastAdapter.
+
+    private ForecastAdapter mForecastAdapter;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////
 
     public ForecastFragment() {
     }
@@ -139,14 +151,32 @@ public class ForecastFragment extends Fragment {
         //CON NUEVA CLASS ASYNTASK SACADA FUERA DE ESTE FRAGMENT:
 
 
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity(), mForecastAdapter);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        //asi si no hay valor en el key coge le default!!:
-        //http://developer.android.com/reference/android/content/SharedPreferences.html
+//        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity(), mForecastAdapter);
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        //asi si no hay valor en el key coge le default!!:
+//        //http://developer.android.com/reference/android/content/SharedPreferences.html
+//
+//        String LocationFromPrefs = prefs.getString(getString(R.string.pref_location_key),
+//                getString(R.string.pref_location_default));
+//        weatherTask.execute(LocationFromPrefs);
+//
 
-        String LocationFromPrefs = prefs.getString(getString(R.string.pref_location_key),
-                getString(R.string.pref_location_default));
-        weatherTask.execute(LocationFromPrefs);
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        ////// ////////////////////////////////////////////////////////////////////////////////////////////
+        //////NO SE USA
+        //Inside of FetchWeatherTask, we’re going to remove the formatting code and anything for updating the adapter.
+        //  SE HACE CON NUEVA UTILITY CLASS Y CAMBIO EL FECTWEATEHERTASK TAMBIEN:.
+        //vamoa acambiarlo por el nuevo FroreCastAdapter!!:
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
+        String location = Utility.getPreferredLocation(getActivity());
+        weatherTask.execute(location);
+
+
+
+
 
     }
 
@@ -227,17 +257,47 @@ public class ForecastFragment extends Fragment {
         /////////////////////////////////////////////////////////////////////////////////////////////
 
 
+//
+//        mForecastAdapter = new ArrayAdapter<String>(
+//                //el context es este fragment parent activity
+//                getActivity(),
+//                //Id del de item layout
+//                R.layout.list_item_forecast_textview,
+//                //ID del text para rellenar dentro de ese layout
+//                R.id.list_item_forecast_textview,
+//                //los datos  a rellenar a partir de la List creada
+//                new ArrayList<String>()
+//        );
 
-        mForecastAdapter = new ArrayAdapter<String>(
-                //el context es este fragment parent activity
-                getActivity(),
-                //Id del de item layout
-                R.layout.list_item_forecast_textview,
-                //ID del text para rellenar dentro de ese layout
-                R.id.list_item_forecast_textview,
-                //los datos  a rellenar a partir de la List creada
-                new ArrayList<String>()
-        );
+        //COMO AHORA ES UN CURSOR ADAPTER LO LLENAMOS ASI:
+
+//
+//        2. Get Data from the Database
+//
+//        Let’s go to where we first need to populate the ForecastFragment with data and do
+//        so by getting the data from the database. Go to onCreateView.
+//        Use WeatherProvider to query the database the same way you are in FetchWeatherTask:
+
+
+
+        String locationSetting = Utility.getPreferredLocation(getActivity());
+
+        // Sort order:  Ascending, by date.
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+                locationSetting, System.currentTimeMillis());
+
+        Cursor cur = getActivity().getContentResolver().query(weatherForLocationUri,
+                null, null, null, sortOrder);
+
+
+//        3. Make a new ForecastAdapter
+//
+//        Still in onCreateView, we have a Cursor cur, so let’s use our new ForecastAdapter.
+//        Create a new ForecastAdapter with the new cursor. The list will be empty the first time we run.
+
+                mForecastAdapter = new ForecastAdapter(getActivity(), cur, 0);
+
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////
@@ -268,13 +328,37 @@ public class ForecastFragment extends Fragment {
                 Toast toast = Toast.makeText(context, textForeCast, duration);
                 toast.show();
                 */
+                ////////////////////////////////////////////////////////////////////////////////////////////
+                /////////////////////////////////////////////////////////////////////////////////////////////
 
-                String textForeCast = mForecastAdapter.getItem(position);
+//                4. Delete OnItemClickListener
+//
+//                Because we changed the adapter, the OnItemClickListener in ForecastFragment for the ListView
+//                won’t work. Specifically this line String forecast = mForecastAdapter.getItem(position);
+//                is problematic because getItem with a CursorAdapter doesn’t return a string.
+//
+//                        Go ahead and remove or comment out this for now.
+//
+//                        We’ll talk more about this and correct this soon enough.
+//                Until then, our code will compile and run but not have access to our DetailView.
+//
+//
 
-                //AHORA EN VEZ DE L TOAST LANZAMOS LA NEW ACTIVITY POR MEDIO DE UN INTENT
 
-                Intent intent=new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT,textForeCast);
-                startActivity(intent);
+
+                //vamos ahacerlo con el cursoradapter y este  NO devuleve una String:
+//               // String textForeCast = mForecastAdapter.getItem(position);
+//
+//
+//
+//                //AHORA EN VEZ DE L TOAST LANZAMOS LA NEW ACTIVITY POR MEDIO DE UN INTENT
+//
+//                Intent intent=new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT,textForeCast);
+//                startActivity(intent);
+
+                ////////////////////////////////////////////////////////////////////////////////////////////
+                /////////////////////////////////////////////////////////////////////////////////////////////
+
 
             }
         });

@@ -236,6 +236,8 @@ public class WeatherProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
+
+
                 break;
             }
 
