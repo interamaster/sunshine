@@ -372,7 +372,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 //                    locationSetting, System.currentTimeMillis());
 //
 //            // Students: Uncomment the next lines to display what what you stored in the bulkInsert
-//            //esto no hace nada !!lo que hace es que inserte 0!!!!?¿?¿ si no lo hacemos por medio un bulkinsert!!
+//            //esto no hace nada !!lo que hace es que inserte 0!!!! si no lo hacemos por medio un bulkinsert!!
 //
 //            Cursor cur = mContext.getContentResolver().query(weatherForLocationUri,
 //                    null, null, null, sortOrder);
