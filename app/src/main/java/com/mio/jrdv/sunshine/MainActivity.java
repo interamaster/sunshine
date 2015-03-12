@@ -19,8 +19,18 @@ public class MainActivity extends ActionBarActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
+
+    private String mLocation;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //le damos el valor guardao en setting con la yuda de la utility class:
+
+        mLocation = Utility.getPreferredLocation(this);
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
