@@ -20,6 +20,11 @@ public class MainActivity extends ActionBarActivity {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
 
+    //AÑADIMOMS UN TAG AL FRAGMENT
+
+    private final String FORECASTFRAGMENT_TAG = "FFTAG";
+
+
     private String mLocation;
 
 
@@ -34,8 +39,15 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.container, new ForecastFragment())
+//                    .commit();
+
+            //CON LE TAG DEL FRAGMENT:
+
+
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
         }
     }
@@ -126,6 +138,23 @@ public class MainActivity extends ActionBarActivity {
         }
 
     }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////NUEVOS PARA ARREGLAR SETTINGS////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String location = Utility.getPreferredLocation( this );
+        // update the location in our second pane using the fragment manager
+        if (location != null && !location.equals(mLocation)) {
+            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            if ( null != ff ) {
+                ff.onLocationChanged();
+            }
+            mLocation = location;
+        }
+    }
 
 }

@@ -241,8 +241,15 @@ import com.mio.jrdv.sunshine.data.WeatherContract;
 
         //al arrancarque ya actualziae del tiron
 
-        updateWeather();
+        //updateWeather(); LO QUITAMOS POR LO DE ABAJO:
 
+
+       // 5. Remove Excessive Weather Fetching
+       // Now that we have a database, we don’t have to constantly talk to the network and fetch the weather.
+       // But if you look at onStart from ForecastFragment, you'll see every time it's called, it downloads data from Open Weather Map.
+       // This means every time you rotate the device, you'll be attempting to connect to Open Weather Map.
+       // In Lesson 6 we’ll show you how to schedule updates in the background, but for now let’s save on network bandwidth and battery by deleting onStart.
+       // You can use the “refresh” menu item to get new weather data.
 
     }
 
@@ -518,6 +525,20 @@ import com.mio.jrdv.sunshine.data.WeatherContract;
 
         return rootView;
     }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////PARA ARREGLAR SETTINGS////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    // since we read the location when we create the loader, all we need to do is restart things
+    void onLocationChanged( ) {
+        updateWeather();
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+    }
+
+
+
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////NUEVOS DEL CURSOR LOADER////////////////////////////////////////////
